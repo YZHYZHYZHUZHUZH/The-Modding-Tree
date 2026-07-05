@@ -28,9 +28,9 @@ addLayer("p", {
         {key: "s", description: "S: Reset for skill", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
     layerShown(){return true},
-    /*doReset(resettingLayer) {
-        //if (hasMilestone("q", 11)) layerDataReset("p", ["upgrades"])
-    },*/
+    doReset(resettingLayer) {
+        if (hasMilestone("q", 11)) layerDataReset("p", ["upgrades"])
+    },
     passiveGeneration() {
         let mult = new Decimal(0)
         if (hasMilestone("p", 0)) mult = mult.add(0.1)
@@ -85,11 +85,6 @@ addLayer("p", {
             effectDescription: "You learn by yourself. Gain 10% of skill on reset per second.",
             done() { return player.p.points.gte(100) }
         },
-        1: {
-            requirementDescription: "1000 skill",
-            effectDescription: "You finnaly prepared yourself... Unlock the Problem layer.",
-            done() { return player.p.points.gte(1000) }
-        },
         
     }
     
@@ -98,17 +93,17 @@ addLayer("p", {
 
 addLayer("q", {
     name: "problem", // This is optional, only used in a few places, If absent it just uses the layer id.
-    symbol: "p", // This appears on the layer's node. Default is the id with the first letter capitalized
+    symbol: "pr", // This appears on the layer's node. Default is the id with the first letter capitalized
     position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
     startData() { return {
-        unlocked: hasMilestone("p", 1),
+        unlocked: false,
 		points: new Decimal(0),
     }},
     color: "#117891",
     requires: new Decimal(1000), // Can be a function that takes requirement increases into account
     resource: "problem", // Name of prestige currency
     baseResource: "skill", // Name of resource prestige is based on
-    baseAmount() {return player.points}, // Get the current amount of baseResource
+    baseAmount() {return player["p"].points}, // Get the current amount of baseResource
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent: 0.5, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
@@ -122,17 +117,8 @@ addLayer("q", {
     hotkeys: [
         {key: "p", description: "P: Reset for problem", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
-    layerShown(){return hasMilestone("p", 1)},
-    passiveGeneration(){
-        let mult = new Decimal(0)
-        return mult
-    },
+    layerShown(){return hasAchievement("A", 11)},
     upgrades: {
-        21: {
-            title: "1",
-            description: "You got interested. You can now get time.",
-            cost: new Decimal(1),
-        },
     },
     milestones: {
         10: {
@@ -149,4 +135,37 @@ addLayer("q", {
     }
     
     
+})
+
+addLayer("A", {
+    name: "achievement", // 成就系统层
+    symbol: "ac", // 层 UI 代号
+    position: 0, // 侧边栏排序
+    startData() { 
+        return {
+            unlocked: true, // 默认解锁
+            points: new Decimal(0), // 没有需要显示的资源
+            achievements: [], // 初始化成就数组
+        }
+    },
+    color: "#bb960e",
+    type: "none", // 不生成任何资源
+    row: "side", // 这是侧边层
+    layerShown() { return true; }, // 始终显示侧边栏内容
+    tabFormat: [
+        "blank", // 一些间距
+        ["display-text", function() { 
+            return "Complete achievements to unlock bonuses!" 
+        }],
+        "blank", // 更多间距
+        "achievements", // 成就网格
+    ],
+    achievements: {
+        11: {
+            name: "skillful", // 成就名称
+            tooltip: "Get 1000 skill. Unlock Problem layer.", // 鼠标提示文本
+            done() { return player.p.points.gte(1000) }, // 完成条件
+            unlocked() { return true }, // 默认解锁展示
+        },
+    },
 })
