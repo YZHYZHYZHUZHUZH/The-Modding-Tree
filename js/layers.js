@@ -139,33 +139,35 @@ addLayer("q", {
 
 addLayer("A", {
     name: "achievement", // 成就系统层
-    symbol: "ac", // 层 UI 代号
-    position: 0, // 侧边栏排序
+    symbol: "ac", // 图标
+    position: 0, // 侧边栏位置
     startData() { 
         return {
             unlocked: true, // 默认解锁
-            points: new Decimal(0), // 没有需要显示的资源
-            achievements: [], // 初始化成就数组
+            points: new Decimal(0), // 初始化点数
+            achievements: [] // 初始化空成就存储
         }
     },
     color: "#bb960e",
-    type: "none", // 不生成任何资源
-    row: "side", // 这是侧边层
-    layerShown() { return true; }, // 始终显示侧边栏内容
-    tabFormat: [
-        "blank", // 一些间距
-        ["display-text", function() { 
-            return "Complete achievements to unlock bonuses!" 
-        }],
-        "blank", // 更多间距
-        "achievements", // 成就网格
-    ],
+    type: "none", // 只显示成就
+    row: "side", // 属于侧边栏
+    layerShown() { return true; },
     achievements: {
         11: {
-            name: "skillful", // 成就名称
-            tooltip: "Get 1000 skill. Unlock Problem layer.", // 鼠标提示文本
-            done() { return player.p.points.gte(1000) }, // 完成条件
-            unlocked() { return true }, // 默认解锁展示
+            name: "Skillful",
+            tooltip: "Get 1000 skill. Unlock Problem layer.",
+            done() { return player.p.points.gte(1000); }, // 成就完成条件
+            unlocked() { return true; },                  // 始终显示
         },
     },
-})
+    tabFormat: [
+        "blank",
+        ["display-text", function() { 
+            return `Complete achievements to unlock bonuses!<br><br>
+                    You have ${format(player.p.points)} Skills<br>
+                    Achievements Completed: ${player.A.achievements.length}`;
+        }],
+        "blank",
+        "achievements", // 加载成就网格
+    ],
+});
