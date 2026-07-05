@@ -81,7 +81,6 @@ addLayer("p", {
                 
             }
         },
-        etc
     }
     
     
