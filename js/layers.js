@@ -37,7 +37,7 @@ addLayer("p", {
             description: "You use your time to get more skill.",
             cost: new Decimal(1),
             effect() {
-                return player.points.add(1).pow(0.15)
+                return player.points.add(1)
             },
         },
     },
