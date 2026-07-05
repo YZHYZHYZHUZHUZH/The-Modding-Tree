@@ -28,9 +28,9 @@ addLayer("p", {
         {key: "s", description: "S: Reset for skills", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
     layerShown(){return true},
-    /*doReset(resettingLayer) {
+    doReset(resettingLayer) {
         //if (hasMilestone("q", 1)) layerDataReset("p", ["upgrades"])
-    },*/
+    },
     passiveGeneration() {
         let mult = new Decimal(0)
         if (hasMilestone("p", 0)) mult = mult.add(0.1)
@@ -95,7 +95,7 @@ addLayer("p", {
     
     
 })
-addLayer("q", {
+/*addLayer("q", {
     name: "problem", // This is optional, only used in a few places, If absent it just uses the layer id.
     symbol: "p", // This appears on the layer's node. Default is the id with the first letter capitalized
     position: 1, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
@@ -143,10 +143,10 @@ addLayer("q", {
         1: {
             requirementDescription: "2 skill",
             effectDescription: "Doing problems no longer resets the Skill layer.",
-            done() { return player.p.points.gte(1000) }
+            done() { return player.p.points.gte(2) }
         },
         
     }
     
     
-})
+})*/
