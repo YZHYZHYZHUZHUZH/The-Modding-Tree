@@ -32,54 +32,56 @@ addLayer("p", {
         if (hasMilestone("p", 0)) mult = mult.add(0.1)
         return mult
     },
-    tabFormat: {
-        "Main Tab": {
-            content: "Upgrades",
-            upgrades: {
-                11: {
-                    title: "Bro, what is OI?",
-                    description: "You got interested. You can now get time.",
-                    cost: new Decimal(0),
-                },
-                12: {
-                    title: "Start Learning",
-                    description: "You use your time to get more skill.",
-                    cost: new Decimal(1),
-                    effect() {
-                        return 1.5
+    microtabs: {
+        stuff: {
+            "Main Tab": {
+                content: [[display-text,"Upgrades"]],
+                upgrades: {
+                    11: {
+                        title: "Bro, what is OI?",
+                        description: "You got interested. You can now get time.",
+                        cost: new Decimal(0),
                     },
-                    effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
-                },
-                13: {
-                    title: "Taking class",
-                    description: "You feel like time slows. Skill now boost time.",
-                    cost: new Decimal(3),
-                    effect() {
-                        return player[this.layer].points.add(1).pow(0.5)
+                    12: {
+                        title: "Start Learning",
+                        description: "You use your time to get more skill.",
+                        cost: new Decimal(1),
+                        effect() {
+                            return 1.5
+                        },
+                        effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
                     },
-                    effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
-                },
-                14: {
-                    title: "Good class",
-                    description: "The class was effective. Time boost skill.",
-                    cost: new Decimal(5),
-                    effect() {
-                        return player.points.add(1).times(0.1)
+                    13: {
+                        title: "Taking class",
+                        description: "You feel like time slows. Skill now boost time.",
+                        cost: new Decimal(3),
+                        effect() {
+                            return player[this.layer].points.add(1).pow(0.5)
+                        },
+                        effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
                     },
-                    effectDisplay() { return "+"+format(upgradeEffect(this.layer, this.id)) },
+                    14: {
+                        title: "Good class",
+                        description: "The class was effective. Time boost skill.",
+                        cost: new Decimal(5),
+                        effect() {
+                            return player.points.add(1).times(0.1)
+                        },
+                        effectDisplay() { return "+"+format(upgradeEffect(this.layer, this.id)) },
+                    },
                 },
             },
-        },
-        "Milestones": {
-            content: "Milestones",
-            milestones: {
-                0: {
-                    requirementDescription: "100 skill",
-                    effectDescription: "You learn by yourself. Gain 10% of skill on reset per second.",
-                    done() { return player.p.points.gte(100) }
-                },
-                
-            }
+            "Milestones": {
+                content: [[display-text,"Milestones"]],
+                milestones: {
+                    0: {
+                        requirementDescription: "100 skill",
+                        effectDescription: "You learn by yourself. Gain 10% of skill on reset per second.",
+                        done() { return player.p.points.gte(100) }
+                    },
+                    
+                }
+            },
         },
     }
     
