@@ -83,6 +83,9 @@ addLayer("p", {
                 }
             },
         },
+        otherStuff: {
+            // There could be another set of microtabs here
+        }
     }
     
     
