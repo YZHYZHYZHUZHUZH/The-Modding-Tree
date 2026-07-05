@@ -29,9 +29,9 @@ addLayer("p", {
     ],
     layerShown(){return true},
     doReset(resettingLayer) {
-        if (hasMilestone(resettingLayer, 1)) layerDataReset("p", ["upgrades",])
+        //if (hasMilestone("q", 1)) layerDataReset("p", ["upgrades"])
     },
-    passiveGeneration(){
+    passiveGeneration() {
         let mult = new Decimal(0)
         if (hasMilestone("p", 0)) mult = mult.add(0.1)
         return mult
@@ -121,7 +121,7 @@ addLayer("q", {
     hotkeys: [
         {key: "s", description: "S: Reset for skills", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
-    layerShown(){return true},
+    layerShown(){return hasMilestone("p", 1)},
     passiveGeneration(){
         let mult = new Decimal(0)
         if (hasMilestone("p", 0)) mult = mult.add(0.1)
