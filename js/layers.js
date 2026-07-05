@@ -61,4 +61,12 @@ addLayer("p", {
             effectDisplay() { return "+"+format(upgradeEffect(this.layer, this.id)) },
         },
     },
+    milestones: {
+        0: {
+            requirementDescription: "100 skill",
+            effectDescription: "You learn by yourself. Gain 10% of skill on reset per second.",
+            done() { return player.p.points.gte(100) }
+        },
+        
+    }
 })
