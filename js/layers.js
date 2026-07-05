@@ -28,6 +28,9 @@ addLayer("p", {
         {key: "s", description: "S: Reset for skills", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
     layerShown(){return true},
+    doReset(resettingLayer){
+        layerDataReset("p", ["upgrades"])
+    },
     passiveGeneration(){
         let mult = new Decimal(0)
         if (hasMilestone("p", 0)) mult = mult.add(0.1)
@@ -82,9 +85,64 @@ addLayer("p", {
             effectDescription: "You learn by yourself. Gain 10% of skill on reset per second.",
             done() { return player.p.points.gte(100) }
         },
-        0: {
+        1: {
             requirementDescription: "1000 skill",
             effectDescription: "You finnaly prepared yourself... Unlock the Problem layer.",
+            done() { return player.p.points.gte(1000) }
+        },
+        
+    }
+    
+    
+})
+addLayer("q", {
+    name: "problem", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "p", // This appears on the layer's node. Default is the id with the first letter capitalized
+    position: 1, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() { return {
+        unlocked: hasMilestone("p", 1),
+		points: new Decimal(0),
+    }},
+    color: "#117891",
+    requires: new Decimal(1000), // Can be a function that takes requirement increases into account
+    resource: "problem", // Name of prestige currency
+    baseResource: "skill", // Name of resource prestige is based on
+    baseAmount() {return player.points}, // Get the current amount of baseResource
+    type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+    exponent: 0.5, // Prestige currency exponent
+    gainMult() { // Calculate the multiplier for main currency from bonuses
+        let mult = new Decimal(1)   
+        return mult
+    },
+    gainExp() { // Calculate the exponent on main currency from bonuses
+        return new Decimal(1)
+    },
+    row: 0, // Row the layer is in on the tree (0 is the first row)
+    hotkeys: [
+        {key: "s", description: "S: Reset for skills", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+    ],
+    layerShown(){return true},
+    passiveGeneration(){
+        let mult = new Decimal(0)
+        if (hasMilestone("p", 0)) mult = mult.add(0.1)
+        return mult
+    },
+    upgrades: {
+        11: {
+            title: "1",
+            description: "You got interested. You can now get time.",
+            cost: new Decimal(1),
+        },
+    },
+    milestones: {
+        0: {
+            requirementDescription: "1 problem",
+            effectDescription: "Your first problem solved. You gain 1.5x time.",
+            done() { return player.p.points.gte(1) }
+        },
+        1: {
+            requirementDescription: "2 skill",
+            effectDescription: "Doing problems no longer resets the Skill layer.",
             done() { return player.p.points.gte(1000) }
         },
         
