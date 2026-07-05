@@ -28,8 +28,13 @@ addLayer("p", {
     upgrades: {
         11: {
             title: "Bro, what is OI?",
-            description: "waste your time, but unlock the next upgrade.",
-            cost: new Decimal(1),
+            description: "You got interested. You can now get time.",
+            cost: new Decimal(0),
+        },
+        12: {
+            title: "Start Learning",
+            description: "You use your time to get more skill.",
+            cost: new Decimal(3),
         },
     },
 })
