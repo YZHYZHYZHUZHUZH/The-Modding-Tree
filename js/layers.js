@@ -16,7 +16,8 @@ addLayer("p", {
     gainMult() { // Calculate the multiplier for main currency from bonuses
         let mult = new Decimal(1)
         if (hasUpgrade('p', 12)) mult = mult.times(upgradeEffect('p', 12))
-        if (hasUpgrade('p', 14)) mult = mult.add(upgradeEffect('p', 14))  
+        if (hasUpgrade('p', 14)) mult = mult.add(upgradeEffect('p', 14)) 
+        if (hasUpgrade('p', 15)) mult = mult.add(upgradeEffect('p', 15))     
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -65,12 +66,26 @@ addLayer("p", {
             },
             effectDisplay() { return "+"+format(upgradeEffect(this.layer, this.id)) },
         },
+        15: {
+            title: "Online judge",
+            description: "You signed up for an OJ. Time boost skill more.",
+            cost: new Decimal(20),
+            effect() {
+                return player.points.add(1).pow(0.1)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
+        },
     },
     milestones: {
         0: {
             requirementDescription: "100 skill",
             effectDescription: "You learn by yourself. Gain 10% of skill on reset per second.",
             done() { return player.p.points.gte(100) }
+        },
+        0: {
+            requirementDescription: "1000 skill",
+            effectDescription: "You finnaly prepared yourself... Unlock the Problem layer.",
+            done() { return player.p.points.gte(1000) }
         },
         
     }
