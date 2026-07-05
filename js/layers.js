@@ -56,7 +56,7 @@ addLayer("p", {
             description: "The class was effective. Time boost skill.",
             cost: new Decimal(5),
             effect() {
-                return player.points.add(1).mult(0.1)
+                return player.points.add(1).times(0.1)
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
         },
