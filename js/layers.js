@@ -27,6 +27,11 @@ addLayer("p", {
         {key: "s", description: "S: Reset for skills", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
     layerShown(){return true},
+    passiveGeneration(){
+        let mult = new Decimal(0)
+        if (hasMilestone("p", 0)) mult = mult.add(0.1)
+        return mult
+    },
     upgrades: {
         11: {
             title: "Bro, what is OI?",
