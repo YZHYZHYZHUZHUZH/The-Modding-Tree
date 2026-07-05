@@ -29,7 +29,7 @@ addLayer("p", {
     ],
     layerShown(){return true},
     doReset(resettingLayer) {
-        if (hasMilestone('q', 1)) layerDataReset("p", ["upgrades",])
+        if (hasMilestone(resettingLayer, 1)) layerDataReset("p", ["upgrades",])
     },
     passiveGeneration(){
         let mult = new Decimal(0)
