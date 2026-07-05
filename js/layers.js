@@ -14,7 +14,8 @@ addLayer("p", {
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent: 0.5, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
-        mult = new Decimal(1)
+        let mult = new Decimal(1)
+        if (hasUpgrade('p', 12)) mult = mult.times(upgradeEffect('p', 12))
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -34,7 +35,10 @@ addLayer("p", {
         12: {
             title: "Start Learning",
             description: "You use your time to get more skill.",
-            cost: new Decimal(3),
+            cost: new Decimal(1),
+            effect() {
+                return player.points.add(1).pow(0.15)
+            },
         },
     },
 })
