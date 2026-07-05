@@ -34,7 +34,7 @@ addLayer("p", {
     },
     microtabs: {
         stuff: {
-            "Main Tab": {
+            first: {
                 content: [[display-text,"Upgrades"]],
                 upgrades: {
                     11: {
@@ -71,7 +71,7 @@ addLayer("p", {
                     },
                 },
             },
-            "Milestones": {
+            second: {
                 content: [[display-text,"Milestones"]],
                 milestones: {
                     0: {
