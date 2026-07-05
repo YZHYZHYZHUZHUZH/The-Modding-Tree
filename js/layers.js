@@ -46,7 +46,7 @@ addLayer("p", {
             description: "You feel like time slows. Skill now boost time.",
             cost: new Decimal(1),
             effect() {
-                return skill.pow(0.1)
+                return player[this.layer].points.pow(0.1)
             },
         },
     },
