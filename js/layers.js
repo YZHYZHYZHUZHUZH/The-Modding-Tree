@@ -37,7 +37,16 @@ addLayer("p", {
             description: "You use your time to get more skill.",
             cost: new Decimal(1),
             effect() {
-                return player.points.add(1)
+                return player.points.pow(0.1)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
+        },
+        13: {
+            title: "Your first problem",
+            description: "You use your time to get more skill.",
+            cost: new Decimal(1),
+            effect() {
+                return player.points.pow(0.1)
             },
         },
     },
