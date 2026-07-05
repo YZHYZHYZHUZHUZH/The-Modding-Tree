@@ -16,6 +16,7 @@ addLayer("p", {
     gainMult() { // Calculate the multiplier for main currency from bonuses
         let mult = new Decimal(1)
         if (hasUpgrade('p', 12)) mult = mult.times(upgradeEffect('p', 12))
+        if (hasUpgrade('p', 14)) mult = mult.times(upgradeEffect('p', 14))  
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -42,12 +43,22 @@ addLayer("p", {
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
         },
         13: {
-            title: "Your first problem",
+            title: "Taking class",
             description: "You feel like time slows. Skill now boost time.",
-            cost: new Decimal(1),
+            cost: new Decimal(3),
             effect() {
                 return player[this.layer].points.add(1).pow(0.5)
             },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
+        },
+        14: {
+            title: "Good class",
+            description: "The class was effective. Time boost skill.",
+            cost: new Decimal(5),
+            effect() {
+                return player.points.add(1).pow(0.5)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
         },
     },
 })
