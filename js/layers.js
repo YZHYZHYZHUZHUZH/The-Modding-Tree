@@ -33,8 +33,8 @@ addLayer("p", {
         return mult
     },
     tabFormat: {
-        "Upgrades": {
-            content: [[display-text,"Upgrades"]],
+        "Main Tab": {
+            content: "Upgrades",
             upgrades: {
                 11: {
                     title: "Bro, what is OI?",
@@ -71,7 +71,7 @@ addLayer("p", {
             },
         },
         "Milestones": {
-            content: [[display-text,"Milestones"]],
+            content: "Milestones",
             milestones: {
                 0: {
                     requirementDescription: "100 skill",
