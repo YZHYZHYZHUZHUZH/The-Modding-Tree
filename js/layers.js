@@ -30,7 +30,7 @@ addLayer("p", {
     layerShown(){return true},
     doReset(resettingLayer) {
         var keepList = new Array()
-        if(hasMilestone("q", 11)) keepList.push("upgrades")
+        if(hasMilestone("q", 11) && resettingLayer == "q") keepList.push("upgrades","milestones","best")
         if(resettingLayer == "p") keepList.push("upgrades","points","total","milestones","best")
         layerDataReset("p", keepList)
     },
