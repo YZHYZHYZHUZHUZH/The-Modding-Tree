@@ -164,7 +164,7 @@ addLayer("A", {
         "blank",
         ["display-text", function() { 
             return `Complete achievements to unlock bonuses!<br><br>
-                    You have ${format(player.p.points)} Skills<br>
+                    Achievements won't be shown unless you finish them. (def not a bug)
                     Achievements Completed: ${player.A.achievements.length}`;
         }],
         "blank",
