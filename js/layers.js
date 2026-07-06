@@ -29,7 +29,10 @@ addLayer("p", {
     ],
     layerShown(){return true},
     doReset(resettingLayer) {
-        if (hasMilestone("q", 11)) layerDataReset("p", ["upgrades"])
+        var keepList = new Array()
+        if(hasMilestone("q", 11)) keepList.push("upgrades")
+        if(resettingLayer == "p") keepList.push("upgrades","points","total","milestones","best")
+        layerDataReset("p", keepList)
     },
     passiveGeneration() {
         let mult = new Decimal(0)
@@ -65,7 +68,7 @@ addLayer("p", {
             description: "The class was effective. Time boost skill.",
             cost: new Decimal(5),
             effect() {
-                return player.points.add(1).times(0.1)
+                return player.points.add(1).times(0.05)
             },
             effectDisplay() { return "+"+format(upgradeEffect(this.layer, this.id)) },
         },
@@ -74,6 +77,15 @@ addLayer("p", {
             description: "You signed up for an OJ. Time boost skill more.",
             cost: new Decimal(20),
             effect() {
+                return player.points.add(1).pow(0.15)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
+        },
+        16: {
+            title: "Discussion section",
+            description: "A good place to spend your time. Time boost itself.",
+            cost: new Decimal(100),
+            effect() {
                 return player.points.add(1).pow(0.1)
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
@@ -81,9 +93,9 @@ addLayer("p", {
     },
     milestones: {
         0: {
-            requirementDescription: "100 skill",
+            requirementDescription: "50 skill",
             effectDescription: "You learn by yourself. Gain 10% of skill on reset per second.",
-            done() { return player.p.points.gte(100) }
+            done() { return player.p.points.gte(50) },
         },
         
     }
@@ -164,7 +176,7 @@ addLayer("A", {
         "blank",
         ["display-text", function() { 
             return `Complete achievements to unlock bonuses!<br><br>
-                    Achievements won't be shown unless you finish them. (def not a bug)
+                    Achievements won't be shown unless you finish them. (def not a bug)<br><br>
                     Achievements Completed: ${player.A.achievements.length}`;
         }],
         "blank",
