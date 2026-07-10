@@ -30,14 +30,45 @@ addLayer("p", {
     layerShown(){return true},
     doReset(resettingLayer) {
         var keepList = new Array()
-        if(hasMilestone("q", 11) && resettingLayer == "q") keepList.push("upgrades","milestones","best")
+        if(hasMilestone("q", 221) && resettingLayer == "q") keepList.push("upgrades","milestones","best")
         if(resettingLayer == "p") keepList.push("upgrades","points","total","milestones","best")
         layerDataReset("p", keepList)
     },
     passiveGeneration() {
         let mult = new Decimal(0)
-        if (hasMilestone("p", 0)) mult = mult.add(0.1)
+        if (hasMilestone("p", 110)) mult = mult.add(0.1)
+        if (hasUpgrade("q", 21)) mult = mult.add(upgradeEffect("q", 11))
         return mult
+    },
+    tabFormat: {
+        "Overview": { // 第一个标签：显示基本信息和重置按钮
+            content: [
+                "main-display", // 显示主资源数量和相关说明
+                "resource-display", // 显示基础资源信息
+                "blank", // 空白行
+                ["prestige-button", {}], // 显示重置按钮
+            ],
+        },
+        "Upgrades": { // 第二个标签：显示升级模块
+            content: [
+                "main-display", // 显示主资源数量和相关说明
+                "resource-display", // 显示基础资源信息
+                "blank", // 空白行
+                ["prestige-button", {}], // 显示重置按钮
+                "blank", // 空白行
+                "upgrades", // 显示升级模块
+            ],
+        },
+        "Milestones": { // 第三个标签：显示里程碑
+            content: [
+                "main-display", // 显示主资源数量和相关说明
+                "resource-display", // 显示基础资源信息
+                "blank", // 空白行
+                ["prestige-button", {}], // 显示重置按钮
+                "blank", // 空白行
+                "milestones", // 显示里程碑模块
+            ],
+        },
     },
     upgrades: {
         11: {
@@ -92,7 +123,7 @@ addLayer("p", {
         },
     },
     milestones: {
-        0: {
+        110: {
             requirementDescription: "50 skill",
             effectDescription: "You learn by yourself. Gain 10% of skill on reset per second.",
             done() { return player.p.points.gte(50) },
@@ -102,7 +133,9 @@ addLayer("p", {
     
     
 })
-
+function sigmoidVariant(x, k = 1) {
+    return 0.3 * Math.tanh((k * x) / 2);
+}
 addLayer("q", {
     name: "problem", // This is optional, only used in a few places, If absent it just uses the layer id.
     symbol: "pr", // This appears on the layer's node. Default is the id with the first letter capitalized
@@ -130,15 +163,54 @@ addLayer("q", {
         {key: "p", description: "P: Reset for problem", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
     layerShown(){return hasAchievement("A", 11)},
+    tabFormat: {
+        "Overview": { // 第一个标签：显示基本信息和重置按钮
+            content: [
+                "main-display", // 显示主资源数量和相关说明
+                "resource-display", // 显示基础资源信息
+                "blank", // 空白行
+                ["prestige-button", {}], // 显示重置按钮
+            ],
+        },
+        "Upgrades": { // 第二个标签：显示升级模块
+            content: [
+                "main-display", // 显示主资源数量和相关说明
+                "resource-display", // 显示基础资源信息
+                "blank", // 空白行
+                ["prestige-button", {}], // 显示重置按钮
+                "blank", // 空白行
+                "upgrades", // 显示升级模块
+            ],
+        },
+        "Milestones": { // 第三个标签：显示里程碑
+            content: [
+                "main-display", // 显示主资源数量和相关说明
+                "resource-display", // 显示基础资源信息
+                "blank", // 空白行
+                ["prestige-button", {}], // 显示重置按钮
+                "blank", // 空白行
+                "milestones", // 显示里程碑模块
+            ],
+        },
+    },
     upgrades: {
+        21: {
+            title: "Memorization",
+            description: "You learn from the problems. Problem passively generates skill.",
+            cost: new Decimal(1),
+            effect() {
+                return sigmoidVariant(player[this.layer].points)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id).times(100))+"%" },
+        },
     },
     milestones: {
-        10: {
+        220: {
             requirementDescription: "1 problem",
             effectDescription: "Your first problem solved. You gain 1.5x time.",
             done() { return player.q.points.gte(1) }
         },
-        11: {
+        221: {
             requirementDescription: "2 problem",
             effectDescription: "Doing problems no longer resets the Skill layer.",
             done() { return player.q.points.gte(2) }
@@ -160,7 +232,7 @@ addLayer("A", {
             achievements: [] // 初始化空成就存储
         }
     },
-    color: "#bb960e",
+    color: "#ebb800",
     type: "none", // 只显示成就
     row: "side", // 属于侧边栏
     layerShown() { return true; },
