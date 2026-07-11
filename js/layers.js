@@ -37,7 +37,7 @@ addLayer("p", {
     passiveGeneration() {
         let mult = new Decimal(0)
         if (hasMilestone("p", 110)) mult = mult.add(0.1)
-        if (hasUpgrade("q", 21)) mult = mult.add(upgradeEffect("q", 11))
+        if (hasUpgrade("q", 21)) mult = mult.add(upgradeEffect("q", 21))
         return mult
     },
     tabFormat: {
@@ -133,9 +133,15 @@ addLayer("p", {
     
     
 })
-/*function sigmoidVariant(x, k = 1) {
-    return 0.3 * Math.tanh((k * x) / 2);
-}*/
+// 如果 Math.tanh 不存在时的替代写法
+function sigmoidVariantPolyfill(x, k = 1) {
+    const arg = (k * x) / 2;
+    // 利用 tanh(z) = (e^z - e^-z) / (e^z + e^-z) 计算
+    // 也可以写成 1 - 2 / (e^(2z) + 1)
+    if (arg > 20) return 0.5; // 防止 e^(2z) 溢出 Infinity
+    const e2z = Math.exp(2 * arg);
+    return 0.5 * ((e2z - 1) / (e2z + 1));
+}
 addLayer("q", {
     name: "problem", // This is optional, only used in a few places, If absent it just uses the layer id.
     symbol: "pr", // This appears on the layer's node. Default is the id with the first letter capitalized
@@ -199,9 +205,9 @@ addLayer("q", {
             description: "You learn from the problems. Problem passively generates skill.",
             cost: new Decimal(1),
             effect() {
-                return 0.3 * Math.tanh((1 * player[this.layer].points) / 2)
+                return sigmoidVariantPolyfill(player[this.layer].points)
             },
-            effectDisplay() { return format(upgradeEffect(this.layer, this.id).times(100))+"%" },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"% per s" },
         },
     },
     milestones: {
