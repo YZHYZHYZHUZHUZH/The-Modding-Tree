@@ -133,9 +133,9 @@ addLayer("p", {
     
     
 })
-function sigmoidVariant(x, k = 1) {
+/*function sigmoidVariant(x, k = 1) {
     return 0.3 * Math.tanh((k * x) / 2);
-}
+}*/
 addLayer("q", {
     name: "problem", // This is optional, only used in a few places, If absent it just uses the layer id.
     symbol: "pr", // This appears on the layer's node. Default is the id with the first letter capitalized
@@ -199,7 +199,7 @@ addLayer("q", {
             description: "You learn from the problems. Problem passively generates skill.",
             cost: new Decimal(1),
             effect() {
-                return sigmoidVariant(player[this.layer].points)
+                return 0.3 * Math.tanh((1 * player[this.layer].points) / 2)
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id).times(100))+"%" },
         },
