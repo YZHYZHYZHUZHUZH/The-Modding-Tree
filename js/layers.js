@@ -102,6 +102,7 @@ addLayer("p", {
             title: "Taking class",
             description: "You feel like time slows. Skill now boost time.",
             cost: new Decimal(3),
+            tooltip: "Formula: (x+1)^0.5",
             effect() {
                 return player[this.layer].points.add(1).pow(0.5)
             },
@@ -111,6 +112,7 @@ addLayer("p", {
             title: "Good class",
             description: "The class was effective. Time boost skill.",
             cost: new Decimal(5),
+            tooltip: "Formula: (x+1)*0.05",
             effect() {
                 return player.points.add(1).times(0.05)
             },
@@ -120,6 +122,7 @@ addLayer("p", {
             title: "Online judge",
             description: "You signed up for an OJ. Time boost skill more.",
             cost: new Decimal(20),
+            tooltip: "Formula: (x+1)^0.15",
             effect() {
                 return player.points.add(1).pow(0.15)
             },
@@ -129,6 +132,7 @@ addLayer("p", {
             title: "Discussion section",
             description: "A good place to spend your time. Time boost itself.",
             cost: new Decimal(100),
+            tooltip: "Formula: (x+1)^0.1",
             effect() {
                 return player.points.add(1).pow(0.1)
             },
@@ -170,7 +174,12 @@ addLayer("q", {
     baseResource: "skill", // Name of resource prestige is based on
     baseAmount() {return player["p"].points}, // Get the current amount of baseResource
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
-    exponent: 0.5, // Prestige currency exponent
+    exponent() { // Prestige currency exponent
+        let exp = new Decimal(0.1)
+        if(hasUpgrade("q", 22)) exp = new Decimal(0.3)
+        if(hasUpgrade("q", 23)) exp = new Decimal(0.5)
+        return exp
+    },
     gainMult() { // Calculate the multiplier for main currency from bonuses
         let mult = new Decimal(1)   
         return mult
@@ -190,8 +199,8 @@ addLayer("q", {
                 "blank",
                 ["display-text", function() { 
                     return `Problem boosts skill gain.<br><br>
-                            Use this formula: (pr+1)^0.3<br><br>
-                            Has softcap at 1000 problem, after that it will be 1000^0.3+(pr-99)^0.1<br><br>
+                            Use this formula: (x+1)^0.3<br><br>
+                            Has softcap at 1000 problem, after that it will be 1000^0.3+(x-999)^0.1<br><br>
                             Current boost: ${format(getqBoost(player.q.points))}x`;
                 }],
             ],
@@ -222,10 +231,21 @@ addLayer("q", {
             title: "Memorization",
             description: "You learn from the problems. Best problem passively generates skill.",
             cost: new Decimal(1),
+            tooltip: "Formula: 0.3*tanh(best/2).(capped at 0.3 in case you cant do math)",
             effect() {
                 return sigmoidVariantPolyfill(player[this.layer].best)
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id) * 100)+"%" },
+        },
+        22: {
+            title: "More...",
+            description: "Problem exponent increases to .3",
+            cost: new Decimal(5),
+        },
+        23: {
+            title: "More!",
+            description: "Problem exponent increases to .5",
+            cost: new Decimal(20),
         },
     },
     milestones: {
