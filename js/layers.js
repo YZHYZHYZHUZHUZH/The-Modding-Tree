@@ -1,6 +1,6 @@
 function getqBoost(points) {
     let mult = new Decimal(1)
-    let scap = new Decimal(100)
+    let scap = new Decimal(1000)
     if (points.lt(scap)) mult = mult.times(points.add(1).pow(0.3))
     else {
         let capped = scap.pow(0.3)
@@ -191,7 +191,7 @@ addLayer("q", {
                 ["display-text", function() { 
                     return `Problem boosts skill gain.<br><br>
                             Use this formula: (pr+1)^0.3<br><br>
-                            Has softcap at 100 problem, after that it will be 100^0.3+(pr-99)^0.1<br><br>
+                            Has softcap at 1000 problem, after that it will be 1000^0.3+(pr-99)^0.1<br><br>
                             Current boost: ${format(getqBoost(player.q.points))}x`;
                 }],
             ],
