@@ -1,3 +1,14 @@
+function getqBoost(points) {
+    let mult = new Decimal(1)
+    let scap = new Decimal(100)
+    if (points.lt(scap)) mult = mult.times(points.add(1).pow(0.3))
+    else {
+        let capped = scap.pow(0.3)
+        let overflow = Decimal.max(0, points.minus(scap.add(-1)))
+        mult = mult.times(capped.add(overflow.pow(0.1)))
+    }
+    return mult
+}
 addLayer("p", {
     name: "skill", // This is optional, only used in a few places, If absent it just uses the layer id.
     symbol: "sk", // This appears on the layer's node. Default is the id with the first letter capitalized
@@ -17,20 +28,19 @@ addLayer("p", {
         let mult = new Decimal(1)
         if (hasUpgrade('p', 12)) mult = mult.times(upgradeEffect('p', 12))
         if (hasUpgrade('p', 14)) mult = mult.add(upgradeEffect('p', 14)) 
-        if (hasUpgrade('p', 15)) mult = mult.add(upgradeEffect('p', 15))     
+        if (hasUpgrade('p', 15)) mult = mult.add(upgradeEffect('p', 15))
+        
+        //Problem layer points effect
+        mult = mult.times(getqBoost(player.q.points))
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
         return new Decimal(1)
     },
     row: 0, // Row the layer is in on the tree (0 is the first row)
-    hotkeys: [
-        {key: "s", description: "S: Reset for skill", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
-    ],
     layerShown(){return true},
     doReset(resettingLayer) {
         var keepList = new Array()
-        if(hasMilestone("q", 221) && resettingLayer == "q") keepList.push("upgrades","milestones","best")
         if(resettingLayer == "p") keepList.push("upgrades","points","total","milestones","best")
         layerDataReset("p", keepList)
     },
@@ -39,6 +49,9 @@ addLayer("p", {
         if (hasMilestone("p", 110)) mult = mult.add(0.1)
         if (hasUpgrade("q", 21)) mult = mult.add(upgradeEffect("q", 21))
         return mult
+    },
+    autoUpgrade() {
+        return hasMilestone("q", 221)
     },
     tabFormat: {
         "Overview": { // 第一个标签：显示基本信息和重置按钮
@@ -138,10 +151,11 @@ function sigmoidVariantPolyfill(x, k = 1) {
     const arg = (k * x) / 2;
     // 利用 tanh(z) = (e^z - e^-z) / (e^z + e^-z) 计算
     // 也可以写成 1 - 2 / (e^(2z) + 1)
-    if (arg > 20) return 0.5; // 防止 e^(2z) 溢出 Infinity
+    if (arg > 20) return 0.3; // 防止 e^(2z) 溢出 Infinity
     const e2z = Math.exp(2 * arg);
-    return 0.5 * ((e2z - 1) / (e2z + 1));
+    return 0.3 * ((e2z - 1) / (e2z + 1));
 }
+
 addLayer("q", {
     name: "problem", // This is optional, only used in a few places, If absent it just uses the layer id.
     symbol: "pr", // This appears on the layer's node. Default is the id with the first letter capitalized
@@ -165,9 +179,6 @@ addLayer("q", {
         return new Decimal(1)
     },
     row: 1, // Row the layer is in on the tree (0 is the first row)
-    hotkeys: [
-        {key: "p", description: "P: Reset for problem", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
-    ],
     layerShown(){return hasAchievement("A", 11)},
     tabFormat: {
         "Overview": { // 第一个标签：显示基本信息和重置按钮
@@ -176,6 +187,13 @@ addLayer("q", {
                 "resource-display", // 显示基础资源信息
                 "blank", // 空白行
                 ["prestige-button", {}], // 显示重置按钮
+                "blank",
+                ["display-text", function() { 
+                    return `Problem boosts skill gain.<br><br>
+                            Use this formula: (pr+1)^0.3<br><br>
+                            Has softcap at 100 problem, after that it will be 100^0.3+(pr-99)^0.1<br><br>
+                            Current boost: ${format(getqBoost(player.q.points))}x`;
+                }],
             ],
         },
         "Upgrades": { // 第二个标签：显示升级模块
@@ -202,12 +220,12 @@ addLayer("q", {
     upgrades: {
         21: {
             title: "Memorization",
-            description: "You learn from the problems. Problem passively generates skill.",
+            description: "You learn from the problems. Best problem passively generates skill.",
             cost: new Decimal(1),
             effect() {
-                return sigmoidVariantPolyfill(player[this.layer].points)
+                return sigmoidVariantPolyfill(player[this.layer].best)
             },
-            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"% per s" },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id) * 100)+"%" },
         },
     },
     milestones: {
@@ -218,7 +236,7 @@ addLayer("q", {
         },
         221: {
             requirementDescription: "2 problem",
-            effectDescription: "Doing problems no longer resets the Skill layer.",
+            effectDescription: "You know what to do. Auto buy skill upgrades.",
             done() { return player.q.points.gte(2) }
         },
         
@@ -242,14 +260,6 @@ addLayer("A", {
     type: "none", // 只显示成就
     row: "side", // 属于侧边栏
     layerShown() { return true; },
-    achievements: {
-        11: {
-            name: "Skillful",
-            tooltip: "Get 1000 skill. Unlock Problem layer.",
-            done() { return player.p.points.gte(1000); }, // 成就完成条件
-            unlocked() { return true; },                  // 始终显示
-        },
-    },
     tabFormat: [
         "blank",
         ["display-text", function() { 
@@ -260,4 +270,12 @@ addLayer("A", {
         "blank",
         "achievements", // 加载成就网格
     ],
+    achievements: {
+        11: {
+            name: "Skillful",
+            tooltip: "Get 1000 skill. Unlock Problem layer.",
+            done() { return player.p.points.gte(1000); }, // 成就完成条件
+            unlocked() { return true; },                  // 始终显示
+        },
+    },
 });
