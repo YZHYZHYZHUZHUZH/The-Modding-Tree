@@ -67,24 +67,35 @@ addLayer("m", {
     upgrades: {
         11: {
             title: "canGenPoints()",
-            description: "function canGenPoints() {return true}. You can now get inspiration.",
+            description: "You can now get inspiration.",
+            tooltip: "function canGenPoints() {return true}",
             cost: new Decimal(0),
         },
         12: {
             title: "modInfo",
-            description: "let modInfo = { ... }. You get more inspiration",
+            description: "You get more inspiration.",
+            tooltip: "let modInfo =</br>{ ... }",
             cost: new Decimal(1),
-            
+            effectDisplay() { return format(1.5)+"x"},
+        },
+        13: {
+            title: "getPointGen()",
+            description: "inspiration boosts itself.",
+            tooltip: "function getPointGen(){</br>let gain = new Decimal(1)</br>...</br>return gain}",
+            cost: new Decimal(3),
+            effect() {return player.points.add(1).pow(0.3)},
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x"},
+        },
+        51: {
+            title: "isEndgame()",
+            description: "You can now reach the end of the game.",
+            tooltip: "function isEndgame() {return ...}",
+            cost: new Decimal('e1e308'),
         }
     },
     milestones: {
-        110: {
-            requirementDescription: "50 skill",
-            effectDescription: "You learn by yourself. Gain 10% of skill on reset per second.",
-            done() { return player.p.points.gte(50) },
-        },
         
-    }
+    },
     
     
 })
