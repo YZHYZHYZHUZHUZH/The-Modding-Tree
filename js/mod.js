@@ -1,7 +1,7 @@
 let modInfo = {
-	name: "The OI Tree",
+	name: "The TMT Tree",
 	author: "AbsoluTe_disoRdeR",
-	pointsName: "time",
+	pointsName: "inspiration",
 	modFiles: ["layers.js", "tree.js"],
 
 	discordName: "",
@@ -43,9 +43,7 @@ function getPointGen() {
 
 	let gain = new Decimal(0)
 	if(hasUpgrade('p', 11)) gain = gain.add(1)
-	if(hasUpgrade('p', 13)) gain = gain.times(upgradeEffect('p', 13))
-	if(hasUpgrade('p', 16)) gain = gain.times(upgradeEffect('p', 16))
-	if(hasMilestone("q", 220)) gain = gain.times(1.5)
+	if(hasUpgrade('p', 12)) gain = gain.times(1.5)
 	return gain
 }
 
